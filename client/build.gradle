@@ -1,0 +1,50 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+}
+
+group 'Apollo-Tools-DML'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // For logging
+    implementation "ch.qos.logback:logback-classic:${rootProject.ext.logbackVersion}"
+
+    implementation "io.vertx:vertx-core:${rootProject.ext.vertxVersion}"
+
+    // JSON and BSON processing
+    implementation "com.fasterxml.jackson.core:jackson-databind:${rootProject.ext.jacksonVersion}"
+    implementation "de.undercouch:bson4jackson:${rootProject.ext.bson4jacksonVersion}"
+
+    // For serialization utils
+    implementation "org.apache.commons:commons-lang3:${rootProject.ext.commonsLangVersion}"
+
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${rootProject.ext.junitVersion}"
+    testImplementation "org.mockito:mockito-core:${rootProject.ext.mockitoVersion}"
+    testImplementation "org.mockito:mockito-junit-jupiter:${rootProject.ext.mockitoVersion}"
+    testImplementation "io.vertx:vertx-junit5:${rootProject.ext.vertxVersion}"
+    testImplementation "nl.jqno.equalsverifier:equalsverifier-nodep:${rootProject.ext.equalsVerifierVersion}"
+
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${rootProject.ext.junitVersion}"
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+test {
+    useJUnitPlatform()
+}

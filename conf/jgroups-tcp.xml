@@ -1,0 +1,56 @@
+<config xmlns="urn:org:jgroups"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="urn:org:jgroups http://www.jgroups.org/schema/jgroups-4.2.xsd">
+   <!-- jgroups.udp.address is deprecated and will be removed, see ISPN-11867 -->
+    <TCP bind_addr="${jgroups.bind.address,jgroups.tcp.address:SITE_LOCAL}"
+        bind_port="${jgroups.bind.port,jgroups.tcp.port:7800}"
+        external_addr="129.114.34.172"
+        thread_naming_pattern="pl"
+        send_buf_size="640k"
+        sock_conn_timeout="300"
+        linger="${jgroups.tcp.linger:-1}"
+
+        thread_pool.min_threads="${jgroups.thread_pool.min_threads:0}"
+        thread_pool.max_threads="${jgroups.thread_pool.max_threads:200}"
+        thread_pool.keep_alive_time="60000"
+
+   />
+   <RED/>
+   <TCPPING initial_hosts="129.114.109.247[7800],192.5.86.216[7800],129.114.34.172[7800]"
+            port_range="1"
+   />
+   <MERGE3 min_interval="30000"
+           max_interval="90000"
+   />
+   <FD_SOCK/>
+   <!-- Suspect node `timeout` to `timeout + timeout_check_interval` millis after the last heartbeat -->
+   <FD_ALL timeout="60000"
+           interval="15000"
+           timeout_check_interval="10000"
+   />
+   <VERIFY_SUSPECT timeout="5000"/>
+   <pbcast.NAKACK2 xmit_interval="100"
+                   xmit_table_num_rows="50"
+                   xmit_table_msgs_per_row="1024"
+                   xmit_table_max_compaction_time="30000"
+                   resend_last_seqno="true"
+   />
+   <UNICAST3 xmit_interval="100"
+             xmit_table_num_rows="50"
+             xmit_table_msgs_per_row="1024"
+             xmit_table_max_compaction_time="30000"
+   />
+   <pbcast.STABLE desired_avg_gossip="5000"
+                  max_bytes="1M"
+   />
+   <pbcast.GMS print_local_addr="false"
+               join_timeout="${jgroups.join_timeout:2000}"
+   />
+   <UFC max_credits="4m"
+        min_threshold="0.40"
+   />
+   <MFC max_credits="4m"
+        min_threshold="0.40"
+   />
+   <FRAG3 frag_size="8000"/>
+</config>

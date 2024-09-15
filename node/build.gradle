@@ -1,0 +1,109 @@
+plugins {
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'java'
+    id 'application'
+}
+
+group 'Apollo-Tools-DML'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':client')
+
+    // For logging
+    implementation "ch.qos.logback:logback-classic:${rootProject.ext.logbackVersion}"
+
+    // Vert.x
+    implementation "io.vertx:vertx-core:${rootProject.ext.vertxVersion}"
+    implementation "io.vertx:vertx-config:${rootProject.ext.vertxVersion}"
+    implementation "io.vertx:vertx-infinispan:${rootProject.ext.vertxVersion}"
+
+    // Vert.x Monitoring
+    implementation "io.vertx:vertx-micrometer-metrics:${rootProject.ext.vertxVersion}"
+    implementation "io.micrometer:micrometer-registry-prometheus:1.12.2"
+
+    // For node discovery using AWS S3 buckets;
+    // the version needs to be compatible with the Infinispan/JGroups version used by vertx-infinispan
+    implementation "org.jgroups.aws.s3:native-s3-ping:1.0.0.Final"
+    implementation 'graphlayout:graphlayout:1.2.1'
+    annotationProcessor 'graphlayout:graphlayout:1.2.1'
+    annotationProcessor 'graphlayout:graphlayout:1.2.1'
+    annotationProcessor 'graphlayout:graphlayout:1.2.1'
+    annotationProcessor 'graphlayout:graphlayout:1.2.1'
+    annotationProcessor 'graphlayout:graphlayout:1.2.1'
+    // Fix Infinispan warning about unknown enums
+    // https://stackoverflow.com/a/63010482
+    compileOnly "org.infinispan:infinispan-component-annotations:13.0.15.Final"
+
+    // JSON and BSON processing
+    implementation "com.fasterxml.jackson.core:jackson-databind:${rootProject.ext.jacksonVersion}"
+    implementation "de.undercouch:bson4jackson:${rootProject.ext.bson4jacksonVersion}"
+    implementation "com.jayway.jsonpath:json-path:2.8.0"
+
+    // Reflection and serialization utils
+    implementation "org.apache.commons:commons-lang3:3.12.0"
+
+    implementation 'org.luaj:luaj-jse:3.0.1'
+
+    // To inspect the memory layout of objects or arrays in the JVM
+    implementation 'org.openjdk.jol:jol-core:0.17'
+
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${rootProject.ext.junitVersion}"
+    testImplementation "org.mockito:mockito-core:${rootProject.ext.mockitoVersion}"
+    testImplementation "org.mockito:mockito-junit-jupiter:${rootProject.ext.mockitoVersion}"
+    testImplementation "io.vertx:vertx-junit5:${rootProject.ext.vertxVersion}"
+    testImplementation "nl.jqno.equalsverifier:equalsverifier-nodep:${rootProject.ext.equalsVerifierVersion}"
+
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${rootProject.ext.junitVersion}"
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+application {
+    mainClass = 'at.uibk.dps.dml.node.DmlNodeMain'
+    // Set system properties for the JVM
+    applicationDefaultJvmArgs = ['-Djdk.attach.allowAttachSelf',
+                                 "--add-opens",
+                                 "java.base/java.util=ALL-UNNAMED",
+                                 "--add-opens",
+                                 "java.base/java.lang=ALL-UNNAMED"]
+}
+
+
+tasks.withType(JavaExec).configureEach {
+    // Pass selected system properties from gradle to the application
+    System.getProperties().forEach { key, value ->
+        if (key.startsWith('dml.')
+                || key.startsWith('vertx.')
+                || key.startsWith('infinispan.')
+                || key.startsWith('jgroups.')) {
+            systemProperty key as String, value
+        }
+    }
+}
+
+shadowJar {
+    // Required for Infinispan
+    // https://vertx.io/docs/vertx-infinispan/java/#_packaging_an_executable_uber_jar
+    mergeServiceFiles()
+}
+
+jar {
+    manifest {
+        // Required for Infinispan
+        attributes 'Multi-Release': 'true',
+        'Premain-Class': 'org.openjdk.jol.vm.InstrumentationSupport',
+        'Launcher-Agent-Class': 'org.openjdk.jol.vm.InstrumentationSupport$Installer'
+    }
+}
+
+test {
+    useJUnitPlatform()
+}

@@ -1,0 +1,13 @@
+[
+  {
+    "labels": {
+      "job": "vertx-sdkv-8081",
+      "env": "dev"
+    },
+    "targets": [
+      "localhost:8081",
+      "localhost:8082",
+      "localhost:8083"
+    ]
+  }
+]

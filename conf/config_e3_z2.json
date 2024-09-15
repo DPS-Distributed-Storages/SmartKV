@@ -1,0 +1,51 @@
+{
+  "nodeInfo": {
+    "region" : "e3",
+    "zone" : "e3z2",
+    "provider" : "provider",
+    "hostname" : "localhost",
+    "defaultNumReplicas" : 1,
+    "allowReplicasOnTheSameNode" : false,
+    "unitPrices" : {
+      "unitStoragePrice" : 0.9,
+      "unitRequestPricePUT" : 0.9,
+      "unitRequestPriceGET" : 0.9,
+      "unitActiveKVPrice" : 0.9,
+      "unitEgressTransferPrices" : {
+        "unitTransferPrice" : {
+          "SAME_REGION" : 2.0,
+          "SAME_PROVIDER" : 2.5,
+          "INTERNET" : 3.0
+        }
+      },
+      "unitIngressTransferPrices" : {
+        "unitTransferPrice" : {
+          "SAME_REGION" : 0.0,
+          "SAME_PROVIDER" : 0.0,
+          "INTERNET" : 0.0
+        }
+      }
+    },
+    "verticles" : [ {
+      "id" : 3200,
+      "type" : "METADATA",
+      "port" : 3200
+    }, {
+      "id" : 3201,
+      "type" : "STORAGE",
+      "port" : 3201
+    }, {
+      "id" : 3202,
+      "type" : "STORAGE",
+      "port" : 3202
+    }, {
+      "id" : 3203,
+      "type" : "STORAGE",
+      "port" : 3203
+    }, {
+      "id" : 3204,
+      "type" : "STORAGE",
+      "port" : 3204
+    }]
+  }
+}

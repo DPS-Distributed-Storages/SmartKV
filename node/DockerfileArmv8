@@ -1,0 +1,17 @@
+FROM gradle:8.6.0-jdk21 AS build
+COPY --chown=gradle:gradle . /home/gradle/src
+WORKDIR /home/gradle/src
+RUN gradle -p node build
+
+FROM eclipse-temurin:21-alpine
+
+COPY --from=build /home/gradle/src/node/build/libs/*-all.jar /app/dml.jar
+COPY ./conf/config.json ./conf/config.json
+
+ENV JAVA_OPTS=""
+ENV JGROUPS_CONFIG="default-configs/default-jgroups-tcp.xml"
+
+EXPOSE 9000
+EXPOSE 9001
+
+ENTRYPOINT exec java $JAVA_OPTS -Djava.net.preferIPv4Stack=true -Dvertx.jgroups.config=$JGROUPS_CONFIG -jar /app/dml.jar

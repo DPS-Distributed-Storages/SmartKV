@@ -1,0 +1,32 @@
+/experiments/logs/
+experiments/benchmark-main-branch/
+/optimizer/*.png
+
+# Mininet-WiFi
+*.apconf
+
+# Gradle
+/.gradle/
+/node/build/
+/client/build/
+/cli/build/
+
+# Java
+*.jar
+
+# Python
+__pycache__/
+*.egg-info
+build/
+
+# IntelliJ IDE
+.idea
+out/
+.run
+*.iml
+masterthesis-experiments
+
+*.png
+*.iml
+
+*SharedBlogPost*
